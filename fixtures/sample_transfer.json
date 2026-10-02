@@ -1,8 +1,330 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "record_id": "sample-016",
   "domain": "fungus_chain",
   "occurred_at": "2026-09-20T09:00:00+08:00",
-  "revision": 1,
-  "source": "业务样例"
+  "revision": 2,
+  "source": "业务样例（脱敏）",
+  "migration": {
+    "from_schema_version": 1,
+    "note": "v1 仅有信封字段；v2 以样本链条为主线。顶层 occurred_at 语义不变，仍为误食事件锚点时间，event.occurred_at 与其一致；record_id/domain 保持原标识。v1 的单条记录扩展为本 bundle，不产生新的事件主键。",
+    "migrated_at": "2026-09-24T10:00:00+08:00"
+  },
+
+  "event": {
+    "event_id": "evt-0920-diner",
+    "occurred_at": "2026-09-20T09:00:00+08:00",
+    "type": "suspected_poisonous_mushroom_ingestion",
+    "status": "under_followup",
+    "summary": "家庭聚餐饮用自行采摘野生菌煮制菌汤后出现疑似中毒",
+    "shared_meal_id": "meal-0920"
+  },
+
+  "shared_meal": {
+    "meal_id": "meal-0920",
+    "event_id": "evt-0920-diner",
+    "occurred_at": "2026-09-20T09:00:00+08:00",
+    "venue_fuzzy": "某镇某村居民家中（具体住址脱敏）",
+    "diner_person_ids": ["per-er", "per-02", "per-03", "per-04"],
+    "food_items": [
+      {"food_id": "food-soup", "name_fuzzy": "自采混合野生菌汤", "suspected": true},
+      {"food_id": "food-rice", "name_fuzzy": "主食", "suspected": false}
+    ]
+  },
+
+  "persons": [
+    {"person_id": "per-er", "role": "index_patient", "under_observation_as_of": "2026-09-23T15:00:00+08:00"},
+    {"person_id": "per-02", "role": "co_diner", "under_observation_as_of": "2026-09-23T15:00:00+08:00"},
+    {"person_id": "per-03", "role": "co_diner", "under_observation_as_of": "2026-09-23T15:00:00+08:00"},
+    {"person_id": "per-04", "role": "co_diner", "under_observation_as_of": "2026-09-23T15:00:00+08:00"}
+  ],
+
+  "observation_periods": [
+    {"person_id": "per-er", "started_at": "2026-09-20T22:30:00+08:00", "ended_at": null, "nearly_ended_early": true,
+     "note": "初筛阴性且症状缓解时曾拟提前结束观察，因升级流程继续留观"},
+    {"person_id": "per-02", "started_at": "2026-09-20T22:30:00+08:00", "ended_at": null, "nearly_ended_early": true},
+    {"person_id": "per-03", "started_at": "2026-09-20T22:30:00+08:00", "ended_at": null, "nearly_ended_early": false},
+    {"person_id": "per-04", "started_at": "2026-09-20T22:30:00+08:00", "ended_at": null, "nearly_ended_early": false}
+  ],
+
+  "registration_aliases": [
+    {
+      "alias_group_id": "agl-dup-01",
+      "status": "pending_verification",
+      "note": "急诊与实验室编号、疾控编号登记的是同一次误食；核实合并前两套登记并存，任何一个来源都不得丢弃",
+      "linked_event_id": "evt-0920-diner",
+      "registrations": [
+        {"registration_id": "reg-ER-20260920-118", "issued_by": "急诊检验科", "issued_at": "2026-09-20T21:05:00+08:00"},
+        {"registration_id": "reg-CDC-20260921-044", "issued_by": "疾控中心", "issued_at": "2026-09-21T12:10:00+08:00"}
+      ]
+    }
+  ],
+
+  "offline_scans": [
+    {
+      "scan_id": "scn-offline-01",
+      "material_ref": "sam-fruiting",
+      "scanned_at": "2026-09-21T08:40:00+08:00",
+      "device_id": "pda-cdc-field-07",
+      "sync_status": "queued_pending_verification",
+      "synced_at": null,
+      "alias_group_id": "agl-dup-01",
+      "note": "采集地无网络，离线扫码先存机，等待核实合并，暂不生成独立档案"
+    }
+  ],
+
+  "collection_sites": [
+    {
+      "site_id": "site-pickup-01",
+      "linked_event_id": "evt-0920-diner",
+      "descriptor_fuzzy": "某镇某村后山混交林（约 1 km 网格）",
+      "geo_precision": "grid_1km",
+      "exact_coordinates": null,
+      "sensitive": true,
+      "note": "采集位置模糊化处理；精确点位仅在受限的流行病学调查视图中可见"
+    }
+  ],
+
+  "samples": [
+    {
+      "sample_id": "sam-remnant",
+      "sample_type": "leftover_soup",
+      "event_id": "evt-0920-diner",
+      "body_part_fuzzy": "不适用（剩余菌汤，食物样本）",
+      "collected_at": "2026-09-20T18:20:00+08:00",
+      "collected_by_role": "急诊护士",
+      "site_ref": null,
+      "collected_qty_value": 120,
+      "collected_qty_unit": "mL",
+      "container": "无菌密封采样杯",
+      "storage_requirement": "2-8°C 冷藏，避免反复冻融",
+      "seal_id": "seal-rem-01",
+      "seal_intact": true,
+      "registration_ids": ["reg-ER-20260920-118"]
+    },
+    {
+      "sample_id": "sam-fruiting",
+      "sample_type": "whole_fruiting_body",
+      "event_id": "evt-0920-diner",
+      "body_part_fuzzy": "完整子实体（菌盖/菌褶/菌柄整体）",
+      "collected_at": "2026-09-21T08:30:00+08:00",
+      "collected_by_role": "疾控流调人员",
+      "site_ref": "site-pickup-01",
+      "collected_qty_value": 3,
+      "collected_qty_unit": "株",
+      "container": "透气纸质标本袋+硬质外箱",
+      "storage_requirement": "2-8°C 冷藏；形态学观察前不干燥、不浸泡",
+      "seal_id": "seal-fru-01",
+      "seal_intact": true,
+      "registration_ids": ["reg-CDC-20260921-044"]
+    }
+  ],
+
+  "transfers": [
+    {
+      "transfer_id": "trf-er-lab-01",
+      "material_ref": "sam-remnant",
+      "from_party_role": "急诊检验科",
+      "to_party_role": "联检实验室",
+      "handed_over_at": "2026-09-20T20:10:00+08:00",
+      "received_at": "2026-09-20T21:02:00+08:00",
+      "seal_ids": ["seal-rem-01"],
+      "seal_intact_on_receipt": true,
+      "cold_chain_ok": true,
+      "carrier_role": "院内经专人转运",
+      "receipt_ack": {"ack_id": "ack-rem-01", "acknowledged_by_role": "实验室收样员", "acknowledged_at": "2026-09-20T21:02:00+08:00"}
+    },
+    {
+      "transfer_id": "trf-cdc-lab-01",
+      "material_ref": "sam-fruiting",
+      "from_party_role": "疾控中心",
+      "to_party_role": "联检实验室",
+      "handed_over_at": "2026-09-21T10:30:00+08:00",
+      "received_at": "2026-09-21T11:40:00+08:00",
+      "seal_ids": ["seal-fru-01"],
+      "seal_intact_on_receipt": true,
+      "cold_chain_ok": true,
+      "carrier_role": "疾控冷链专车",
+      "receipt_ack": {"ack_id": "ack-fru-01", "acknowledged_by_role": "实验室收样员", "acknowledged_at": "2026-09-21T11:40:00+08:00"}
+    }
+  ],
+
+  "aliquots": [
+    {"aliquot_id": "ali-A-morph", "parent_sample_id": "sam-fruiting", "prepared_at": "2026-09-21T13:00:00+08:00",
+     "qty_value": 1, "qty_unit": "株", "purpose": "morphology", "storage": "2-8°C", "seal_id": "seal-ali-A"},
+    {"aliquot_id": "ali-B-chem", "parent_sample_id": "sam-remnant", "prepared_at": "2026-09-21T13:10:00+08:00",
+     "qty_value": 50, "qty_unit": "mL", "purpose": "chemistry", "storage": "-20°C 冷冻", "seal_id": "seal-ali-B"},
+    {"aliquot_id": "ali-C-mol", "parent_sample_id": "sam-remnant", "prepared_at": "2026-09-21T13:15:00+08:00",
+     "qty_value": 20, "qty_unit": "mL", "purpose": "molecular", "storage": "-20°C 冷冻", "seal_id": "seal-ali-C"},
+    {"aliquot_id": "ali-D-screen", "parent_sample_id": "sam-remnant", "prepared_at": "2026-09-20T21:30:00+08:00",
+     "qty_value": 40, "qty_unit": "mL", "purpose": "rapid_screen", "storage": "2-8°C", "seal_id": "seal-ali-D"}
+  ],
+
+  "test_runs": [
+    {"test_run_id": "tst-screen-01", "material_ref": "ali-D-screen", "method_class": "rapid_screen",
+     "method_name": "菌汤快速初筛", "started_at": "2026-09-20T22:00:00+08:00",
+     "result": "negative", "valid": true, "consumed_qty_value": 35, "consumed_qty_unit": "mL",
+     "note": "40 mL 分装耗用 35 mL、余 5 mL 退回母体；基质为熟汤，形态不可辨，初筛阴性置信度低，不得单独作为解除观察依据"},
+    {"test_run_id": "tst-morph-01", "material_ref": "ali-A-morph", "method_class": "morphology",
+     "method_name": "子实体形态学镜检", "started_at": "2026-09-21T14:00:00+08:00",
+     "result": "positive_match", "valid": true, "consumed_qty_value": 1, "consumed_qty_unit": "株",
+     "matched_taxon_fuzzy": "疑似剧毒鹅膏类（描述性鉴定，不替临床诊断）"},
+    {"test_run_id": "tst-tox-01", "material_ref": "ali-B-chem", "method_class": "chemistry",
+     "method_name": "LC-MS/MS 鹅膏毒肽检测", "started_at": "2026-09-21T16:00:00+08:00",
+     "result": "positive", "valid": true, "consumed_qty_value": 45, "consumed_qty_unit": "mL",
+     "analyte": "α-鹅膏毒肽"},
+    {"test_run_id": "tst-pcr-01", "material_ref": "ali-C-mol", "method_class": "molecular",
+     "method_name": "ITS 片段 PCR（熟汤模板）", "started_at": "2026-09-22T10:00:00+08:00",
+     "result": "negative", "valid": true, "consumed_qty_value": 8, "consumed_qty_unit": "mL",
+     "note": "热处理 DNA 降解+抑制，阴性置信度低"},
+    {"test_run_id": "tst-pcr-02", "material_ref": "ali-C-mol", "method_class": "molecular",
+     "method_name": "ITS 片段 PCR（重复提取）", "started_at": "2026-09-22T15:00:00+08:00",
+     "result": "invalid_contamination", "valid": false, "consumed_qty_value": 8, "consumed_qty_unit": "mL",
+     "note": "提取对照异常，发现污染；该次结果作废并触发报告重评，原结论不覆盖、标注撤回"},
+    {"test_run_id": "tst-pcr-03", "material_ref": "ali-C-mol", "method_class": "molecular",
+     "method_name": "ITS 片段 PCR（纯化后复测）", "started_at": "2026-09-23T09:30:00+08:00",
+     "result": "positive", "valid": true, "consumed_qty_value": 0, "consumed_qty_unit": "mL",
+     "note": "使用 tst-pcr-02 纯化后留存模板复测，未再耗用原始样本"}
+  ],
+
+  "findings": [
+    {"finding_id": "fnd-screen", "test_run_id": "tst-screen-01", "conclusion": "negative", "confidence": "low"},
+    {"finding_id": "fnd-morph", "test_run_id": "tst-morph-01", "conclusion": "positive_match", "confidence": "medium"},
+    {"finding_id": "fnd-tox", "test_run_id": "tst-tox-01", "conclusion": "positive", "confidence": "high"},
+    {"finding_id": "fnd-pcr-01", "test_run_id": "tst-pcr-01", "conclusion": "negative", "confidence": "low"},
+    {"finding_id": "fnd-pcr-02", "test_run_id": "tst-pcr-02", "conclusion": "withdrawn_contamination", "confidence": "none"},
+    {"finding_id": "fnd-pcr-03", "test_run_id": "tst-pcr-03", "conclusion": "positive", "confidence": "medium"}
+  ],
+
+  "reports": [
+    {
+      "report_id": "rpt-v1",
+      "event_id": "evt-0920-diner",
+      "version": 1,
+      "status": "superseded",
+      "issued_at": "2026-09-22T09:00:00+08:00",
+      "finding_ids": ["fnd-morph", "fnd-tox", "fnd-pcr-01"],
+      "superseded_by": "rpt-v2",
+      "lab_statement": "形态学与化学方法支持剧毒鹅膏类暴露；分子初查阴性但置信度低。本报告为实验室结果，不替代医师诊断。",
+      "recommended_action": "同餐人员继续医学观察，勿因初筛/单次 PCR 阴性提前结束"
+    },
+    {
+      "report_id": "rpt-v2",
+      "event_id": "evt-0920-diner",
+      "version": 2,
+      "status": "current",
+      "issued_at": "2026-09-23T15:00:00+08:00",
+      "finding_ids": ["fnd-morph", "fnd-tox", "fnd-pcr-03"],
+      "supersedes": "rpt-v1",
+      "withdrawn_finding_ids": ["fnd-pcr-01", "fnd-pcr-02"],
+      "lab_statement": "污染批次作废并复测后，形态/化学/分子三类方法一致支持剧毒鹅膏类暴露。旧版报告保留可查，本版不覆盖历史。",
+      "recommended_action": "对仍在观察的关联人员按新版本重评风险分层；处置建议由临床医生决定"
+    }
+  ],
+
+  "re_evaluations": [
+    {
+      "re_evaluation_id": "ree-001",
+      "trigger": "contamination_found",
+      "trigger_test_run_id": "tst-pcr-02",
+      "based_on_report_id": "rpt-v2",
+      "decided_at": "2026-09-23T16:00:00+08:00",
+      "scope_rule": "仅重评 ended_at 为空、仍在观察的关联人员",
+      "affected_person_ids": ["per-er", "per-02", "per-03", "per-04"],
+      "excluded_person_ids": [],
+      "changes_diagnosis": false,
+      "note": "重评只更新风险提示与观察建议，不替医生诊断；旧结果与 rpt-v1 均保留"
+    }
+  ],
+
+  "escalations": [
+    {
+      "escalation_id": "esc-001",
+      "event_id": "evt-0920-diner",
+      "raised_at": "2026-09-20T23:40:00+08:00",
+      "raised_by_role": "值班医生",
+      "reason": "初筛阴性但症状一度缓解，存在提前解除观察风险",
+      "adopted_result_refs": ["tst-screen-01"],
+      "sample_state_snapshot": [
+        {"material_ref": "sam-remnant", "state": "in_lab_custody", "seal_intact": true, "storage": "2-8°C"},
+        {"material_ref": "sam-fruiting", "state": "not_yet_collected", "seal_intact": null, "storage": null}
+      ],
+      "receipt_ack_refs": ["ack-rem-01"],
+      "note": "从本次升级可追到当时采用的报告/结果、样本状态与接收确认"
+    }
+  ],
+
+  "disposition_ledger": {
+    "sam-remnant": [
+      {"entry_id": "dsp-rem-split", "at": "2026-09-20T21:30:00+08:00", "action": "aliquot_prepared", "qty_value": 40, "qty_unit": "mL", "ref": "ali-D-screen"},
+      {"entry_id": "dsp-rem-split2", "at": "2026-09-21T13:10:00+08:00", "action": "aliquot_prepared", "qty_value": 50, "qty_unit": "mL", "ref": "ali-B-chem"},
+      {"entry_id": "dsp-rem-split3", "at": "2026-09-21T13:15:00+08:00", "action": "aliquot_prepared", "qty_value": 20, "qty_unit": "mL", "ref": "ali-C-mol"},
+      {"entry_id": "dsp-rem-return", "at": "2026-09-21T18:00:00+08:00", "action": "returned_from_aliquot", "qty_value": 5, "qty_unit": "mL", "ref": "ali-D-screen"},
+      {"entry_id": "dsp-rem-destroy", "at": "2026-11-24T10:00:00+08:00", "action": "destroyed_after_retention",
+       "qty_value": 15, "qty_unit": "mL", "retention_until": "2026-11-23",
+       "certificate_id": "dest-cert-rem-01", "witness_roles": ["实验室质量员", "院感监督员"],
+       "method": "高压灭菌后按医疗废物处置", "facility_fuzzy": "本机构指定处置点"}
+    ],
+    "sam-fruiting": [
+      {"entry_id": "dsp-fru-split", "at": "2026-09-21T13:00:00+08:00", "action": "aliquot_prepared", "qty_value": 1, "qty_unit": "株", "ref": "ali-A-morph"},
+      {"entry_id": "dsp-fru-archive", "at": "2026-09-21T18:00:00+08:00", "action": "retained_as_voucher", "qty_value": 2, "qty_unit": "株", "ref": null},
+      {"entry_id": "dsp-fru-destroy", "at": "2026-11-24T10:20:00+08:00", "action": "destroyed_after_retention",
+       "qty_value": 2, "qty_unit": "株", "retention_until": "2026-11-23",
+       "certificate_id": "dest-cert-fru-01", "witness_roles": ["实验室质量员", "院感监督员"],
+       "method": "高压灭菌后按医疗废物处置", "facility_fuzzy": "本机构指定处置点"}
+    ],
+    "ali-A-morph": [
+      {"entry_id": "dsp-A-test", "at": "2026-09-21T14:30:00+08:00", "action": "consumed_by_test", "qty_value": 1, "qty_unit": "株", "ref": "tst-morph-01"},
+      {"entry_id": "dsp-A-destroy", "at": "2026-11-24T10:30:00+08:00", "action": "container_destroyed_empty",
+       "qty_value": 0, "qty_unit": "株", "certificate_id": "dest-cert-ali-A-01"}
+    ],
+    "ali-B-chem": [
+      {"entry_id": "dsp-B-test", "at": "2026-09-21T17:00:00+08:00", "action": "consumed_by_test", "qty_value": 45, "qty_unit": "mL", "ref": "tst-tox-01"},
+      {"entry_id": "dsp-B-destroy", "at": "2026-09-21T17:30:00+08:00", "action": "residue_destroyed",
+       "qty_value": 5, "qty_unit": "mL", "certificate_id": "dest-cert-ali-B-01",
+       "method": "化学性残余按危废流程处置", "facility_fuzzy": "本机构指定处置点"}
+    ],
+    "ali-C-mol": [
+      {"entry_id": "dsp-C-t1", "at": "2026-09-22T10:30:00+08:00", "action": "consumed_by_test", "qty_value": 8, "qty_unit": "mL", "ref": "tst-pcr-01"},
+      {"entry_id": "dsp-C-t2", "at": "2026-09-22T15:30:00+08:00", "action": "consumed_by_test", "qty_value": 8, "qty_unit": "mL", "ref": "tst-pcr-02"},
+      {"entry_id": "dsp-C-destroy", "at": "2026-11-24T10:40:00+08:00", "action": "destroyed_after_retention",
+       "qty_value": 4, "qty_unit": "mL", "retention_until": "2026-11-23",
+       "certificate_id": "dest-cert-ali-C-01",
+       "method": "高压灭菌后按医疗废物处置", "facility_fuzzy": "本机构指定处置点"}
+    ],
+    "ali-D-screen": [
+      {"entry_id": "dsp-D-test", "at": "2026-09-20T22:30:00+08:00", "action": "consumed_by_test", "qty_value": 35, "qty_unit": "mL", "ref": "tst-screen-01"},
+      {"entry_id": "dsp-D-return", "at": "2026-09-21T18:00:00+08:00", "action": "returned_to_parent", "qty_value": 5, "qty_unit": "mL", "ref": "sam-remnant"},
+      {"entry_id": "dsp-D-destroy", "at": "2026-11-24T10:10:00+08:00", "action": "container_destroyed_empty",
+       "qty_value": 0, "qty_unit": "mL", "certificate_id": "dest-cert-ali-D-01"}
+    ]
+  },
+
+  "clinical_summaries": [
+    {
+      "summary_id": "cls-er", "person_id": "per-er",
+      "minimum_necessary": "恶心、呕吐、腹泻，疑似毒蘑菇中毒观察中",
+      "fields_shared": ["symptoms", "onset_time"],
+      "fields_withheld": ["identity", "contact", "address", "detailed_history"],
+      "granted_to": ["联检实验室"],
+      "purpose": "辅助判读样本检测结果"
+    },
+    {
+      "summary_id": "cls-02", "person_id": "per-02",
+      "minimum_necessary": "同餐人员，暂无明显症状，留观中",
+      "fields_shared": ["exposure_status", "observation_status"],
+      "fields_withheld": ["identity", "contact", "address", "detailed_history"],
+      "granted_to": ["联检实验室"],
+      "purpose": "关联人群风险分层"
+    }
+  ],
+
+  "public_advisories": [
+    {
+      "advisory_id": "adv-001", "issued_at": "2026-09-24T09:00:00+08:00",
+      "text": "近期发生因自行采摘、食用野生菌导致的疑似中毒事件。提示：不采摘、不食用不认识的野生菌；初筛阴性或症状缓解不代表安全，同餐者应遵医嘱完成观察。",
+      "redactions": ["person_ids", "names", "contacts", "exact_addresses", "precise_collection_sites"],
+      "site_ref": null
+    }
+  ]
 }

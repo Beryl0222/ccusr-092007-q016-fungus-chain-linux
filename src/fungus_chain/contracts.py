@@ -16,5 +16,7 @@ class DomainRecord:
     source: str
 
 def load_record(path: Path) -> DomainRecord:
+    """读取信封字段。v2 样例在信封之外带有完整样本链条束，多余字段被忽略。"""
     payload = json.loads(path.read_text(encoding="utf-8"))
-    return DomainRecord(**payload)
+    envelope = {key: payload[key] for key in DomainRecord.__dataclass_fields__ if key in payload}
+    return DomainRecord(**envelope)
