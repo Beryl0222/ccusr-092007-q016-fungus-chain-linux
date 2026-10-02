@@ -3,6 +3,481 @@
   "record_id": "sample-016",
   "domain": "fungus_chain",
   "occurred_at": "2026-09-20T09:00:00+08:00",
-  "revision": 1,
-  "source": "业务样例"
+  "revision": 2,
+  "source": "业务样例",
+  "note": "revision 1 只有信封字段；revision 2 在不改变既有标识与时间含义的前提下追加 entities 事件链，未知键对旧读取方保持可忽略。",
+  "entities": [
+    {
+      "id": "evt-2026-0919-01",
+      "type": "exposure_event",
+      "name": "9·19 误食野生菌事件",
+      "occurred_at": "2026-09-19T18:30:00+08:00",
+      "reported_at": "2026-09-20T01:10:00+08:00",
+      "status": "open",
+      "linked_people": ["ppl-index", "ppl-spouse", "ppl-neighbor"],
+      "linked_samples": ["smp-soup-ER", "smp-fruit-CDC-01", "smp-fruit-CDC-02"],
+      "collection_site_ref": "site-watershed-7",
+      "clinical_summary_min": {
+        "audience": "laboratory",
+        "text": "共同进食自采野生菌后 3 人出现恶心、呕吐、腹泻；首症者一过性转氨酶升高。无身份信息、无既往病史、无联系方式。",
+        "fields_excluded": ["name", "id_number", "phone", "home_address", "medical_history"]
+      }
+    },
+    {
+      "id": "meal-2026-0919-01",
+      "type": "shared_meal",
+      "event_ref": "evt-2026-0919-01",
+      "occurred_at": "2026-09-19T18:30:00+08:00",
+      "members": [
+        {"person_ref": "ppl-index", "portion": "常规一份", "fell_ill": true, "onset_at": "2026-09-19T22:40:00+08:00"},
+        {"person_ref": "ppl-spouse", "portion": "少量试尝", "fell_ill": true, "onset_at": "2026-09-20T00:05:00+08:00"},
+        {"person_ref": "ppl-neighbor", "portion": "常规一份", "fell_ill": false, "onset_at": null}
+      ],
+      "observation": {
+        "window_hours": 72,
+        "ends_at": "2026-09-22T18:30:00+08:00",
+        "holds": [
+          {
+            "hold_id": "obs-hold-01",
+            "raised_at": "2026-09-20T06:20:00+08:00",
+            "raised_by": "值班医生",
+            "reason_ref": "res-r2-chem",
+            "reason": "急诊剩余菌汤初筛阴性，恰逢首症者症状缓解，同餐人员拟提前结束观察；阴性不等于无毒且观察窗未满，维持观察。",
+            "decision": "continue_observation",
+            "superseded": false
+          }
+        ],
+        "early_termination_blocked": true
+      }
+    },
+    {
+      "id": "ppl-index",
+      "type": "person",
+      "role": "首症就诊者",
+      "pseudonym": "甲",
+      "under_observation": true
+    },
+    {
+      "id": "ppl-spouse",
+      "type": "person",
+      "role": "同餐者",
+      "pseudonym": "乙",
+      "under_observation": true
+    },
+    {
+      "id": "ppl-neighbor",
+      "type": "person",
+      "role": "同餐者",
+      "pseudonym": "丙",
+      "under_observation": true
+    },
+    {
+      "id": "site-watershed-7",
+      "type": "collection_site",
+      "precision": "blurred",
+      "region_public": "本县南部山区（公开口径：模糊至乡镇级片区）",
+      "geo_internal": {"granularity": "小流域", "exact_coordinates": "internal_only"},
+      "public_release": {
+        "hide_exact_point": true,
+        "text": "近期本县南部山区有误食野生菌风险提示，请勿采食不认识的野生菌。"
+      }
+    },
+    {
+      "id": "smp-soup-ER",
+      "type": "sample",
+      "material": "急诊剩余菌汤（烹熟混合物）",
+      "collected_at": "2026-09-20T02:00:00+08:00",
+      "collected_by": "急诊护士",
+      "site_ref": null,
+      "part": "匀浆混合汤汁",
+      "preservation": {"condition": "2-8℃ 冷藏", "chain_unbroken": true},
+      "event_ref": "evt-2026-0919-01",
+      "registrations": [
+        {"registry": "急诊检验", "accession_no": "ER-LAB-260920-007", "registered_at": "2026-09-20T02:30:00+08:00", "primary": true},
+        {"registry": "疾控收样", "accession_no": "CDC-S-2609-1140", "registered_at": "2026-09-20T05:10:00+08:00", "primary": false}
+      ],
+      "duplicate_record": {
+        "status": "pending_merge",
+        "review_state": "awaiting_verification",
+        "keep_all_sources": true,
+        "note": "同一次误食、同一份送检物在两个系统各登记一个编号；核实前两个编号并存，任何一侧记录都不得丢弃，合并后以 survive_as 指向留存档案。",
+        "survive_as": ["ER-LAB-260920-007", "CDC-S-2609-1140"]
+      },
+      "offline_scans": [
+        {
+          "scan_id": "scan-offline-001",
+          "scanned_at": "2026-09-20T04:55:00+08:00",
+          "device": "转运箱手持终端",
+          "review_state": "awaiting_verification",
+          "accepted": false,
+          "note": "隧道无信号离线扫码，恢复联网后先核实再入账，核实前不生成正式流转记录。"
+        }
+      ],
+      "seal": {"seal_id": "seal-soup-01", "intact_on_handover": true, "sealed_by": "急诊护士", "sealed_at": "2026-09-20T02:10:00+08:00"},
+      "initial_quantity": {"value": 120, "unit": "mL"}
+    },
+    {
+      "id": "smp-fruit-CDC-01",
+      "type": "sample",
+      "material": "完整菌体（疾控在采集地补采）",
+      "collected_at": "2026-09-20T08:20:00+08:00",
+      "collected_by": "疾控现场组",
+      "site_ref": "site-watershed-7",
+      "part": "完整子实体-菌盖",
+      "preservation": {"condition": "干燥标本袋 + 硅胶", "chain_unbroken": true},
+      "event_ref": "evt-2026-0919-01",
+      "registrations": [
+        {"registry": "疾控收样", "accession_no": "CDC-S-2609-1142", "registered_at": "2026-09-20T09:00:00+08:00", "primary": true}
+      ],
+      "seal": {"seal_id": "seal-fruit-01", "intact_on_handover": true, "sealed_by": "疾控现场组", "sealed_at": "2026-09-20T08:25:00+08:00"},
+      "initial_quantity": {"value": 3, "unit": "株"}
+    },
+    {
+      "id": "smp-fruit-CDC-02",
+      "type": "sample",
+      "material": "完整菌体（菌柄分离取材）",
+      "collected_at": "2026-09-20T08:20:00+08:00",
+      "collected_by": "疾控现场组",
+      "site_ref": "site-watershed-7",
+      "part": "完整子实体-菌柄",
+      "preservation": {"condition": "-20℃ 冻存", "chain_unbroken": true},
+      "event_ref": "evt-2026-0919-01",
+      "registrations": [
+        {"registry": "疾控收样", "accession_no": "CDC-S-2609-1143", "registered_at": "2026-09-20T09:00:00+08:00", "primary": true}
+      ],
+      "seal": {"seal_id": "seal-fruit-02", "intact_on_handover": true, "sealed_by": "疾控现场组", "sealed_at": "2026-09-20T08:25:00+08:00"},
+      "initial_quantity": {"value": 2, "unit": "株"}
+    },
+    {
+      "id": "ali-soup-A",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-soup-ER",
+      "part": "匀浆上清",
+      "quantity": {"value": 40, "unit": "mL"},
+      "prepared_at": "2026-09-20T09:20:00+08:00",
+      "prepared_by": "实验室前处理岗"
+    },
+    {
+      "id": "ali-soup-B",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-soup-ER",
+      "part": "匀浆沉淀物",
+      "quantity": {"value": 30, "unit": "mL"},
+      "prepared_at": "2026-09-20T09:20:00+08:00",
+      "prepared_by": "实验室前处理岗"
+    },
+    {
+      "id": "ali-soup-retain",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-soup-ER",
+      "part": "留样原液",
+      "quantity": {"value": 50, "unit": "mL"},
+      "prepared_at": "2026-09-20T09:20:00+08:00",
+      "prepared_by": "实验室前处理岗",
+      "retained": true
+    },
+    {
+      "id": "ali-fruit-cap-morph",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-fruit-CDC-01",
+      "part": "菌盖切片",
+      "quantity": {"value": 1, "unit": "株"},
+      "prepared_at": "2026-09-20T10:00:00+08:00",
+      "prepared_by": "实验室形态岗"
+    },
+    {
+      "id": "ali-fruit-cap-mol",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-fruit-CDC-01",
+      "part": "菌盖组织（分子取材）",
+      "quantity": {"value": 1, "unit": "株"},
+      "prepared_at": "2026-09-20T10:05:00+08:00",
+      "prepared_by": "实验室分子岗"
+    },
+    {
+      "id": "ali-fruit-cap-voucher",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-fruit-CDC-01",
+      "part": "干制凭证标本（完整子实体）",
+      "quantity": {"value": 1, "unit": "株"},
+      "prepared_at": "2026-09-20T08:40:00+08:00",
+      "prepared_by": "疾控现场组",
+      "retained": true
+    },
+    {
+      "id": "ali-fruit-stem-chem",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-fruit-CDC-02",
+      "part": "菌柄提取液",
+      "quantity": {"value": 1, "unit": "株"},
+      "prepared_at": "2026-09-20T10:10:00+08:00",
+      "prepared_by": "实验室化学岗"
+    },
+    {
+      "id": "ali-fruit-stem-retain",
+      "type": "aliquot",
+      "parent_sample_ref": "smp-fruit-CDC-02",
+      "part": "留样完整菌柄",
+      "quantity": {"value": 1, "unit": "株"},
+      "prepared_at": "2026-09-20T10:10:00+08:00",
+      "prepared_by": "实验室前处理岗",
+      "retained": true
+    },
+    {
+      "id": "tfr-ER-to-CDC",
+      "type": "transfer",
+      "sample_ref": "smp-soup-ER",
+      "from_org": "县医院急诊",
+      "to_org": "县疾控中心",
+      "shipped_at": "2026-09-20T03:00:00+08:00",
+      "seal_ref": "seal-soup-01",
+      "seal_intact_at_ship": true,
+      "carrier": "急救转运车",
+      "received_at": "2026-09-20T05:10:00+08:00",
+      "received_by": "疾控收样岗",
+      "seal_intact_at_receive": true,
+      "receipt_confirmed": true,
+      "receipt_note": "封签完整、冷链 4.2℃，数量与随货单一致，双方确认签收。"
+    },
+    {
+      "id": "tfr-CDC-to-LAB",
+      "type": "transfer",
+      "sample_refs": ["smp-fruit-CDC-01", "smp-fruit-CDC-02"],
+      "aliquot_refs": ["ali-soup-A", "ali-soup-B", "ali-soup-retain", "ali-fruit-cap-voucher"],
+      "from_org": "县疾控中心",
+      "to_org": "联合实验室",
+      "shipped_at": "2026-09-20T09:30:00+08:00",
+      "seal_refs": ["seal-fruit-01", "seal-fruit-02"],
+      "seal_intact_at_ship": true,
+      "received_at": "2026-09-20T09:55:00+08:00",
+      "received_by": "实验室收样岗",
+      "seal_intact_at_receive": true,
+      "receipt_confirmed": true,
+      "receipt_note": "3 份分装随完整菌体一并送达，封签完好，接收岗逐份扫码核对确认。"
+    },
+    {
+      "id": "res-r1-morph",
+      "type": "test_result",
+      "aliquot_ref": "ali-fruit-cap-morph",
+      "method": "morphology",
+      "method_name": "宏观与显微形态鉴定",
+      "conclusion": "可疑鹅膏属（具菌托、菌环，孢子印白色）",
+      "confidence": "medium",
+      "is_screening": false,
+      "resulted_at": "2026-09-20T13:00:00+08:00",
+      "superseded": false
+    },
+    {
+      "id": "res-r2-chem",
+      "type": "test_result",
+      "aliquot_ref": "ali-soup-A",
+      "method": "chemical",
+      "method_name": "鹅膏毒肽快筛（显色法）",
+      "conclusion": "未检出（阴性）",
+      "confidence": "low",
+      "is_screening": true,
+      "resulted_at": "2026-09-20T06:10:00+08:00",
+      "interpretation": "烹熟匀浆基质干扰大、快筛灵敏度有限；阴性不能排除含毒，更不能作为解除观察依据。",
+      "superseded": false
+    },
+    {
+      "id": "res-r3-chem",
+      "type": "test_result",
+      "aliquot_ref": "ali-fruit-stem-chem",
+      "method": "chemical",
+      "method_name": "LC-MS/MS 鹅膏毒肽定量",
+      "conclusion": "检出 α-鹅膏毒肽 2.1 mg/kg（干重）",
+      "confidence": "high",
+      "is_screening": false,
+      "resulted_at": "2026-09-20T16:30:00+08:00",
+      "superseded": false
+    },
+    {
+      "id": "res-r4-mol",
+      "type": "test_result",
+      "aliquot_ref": "ali-fruit-cap-mol",
+      "method": "molecular",
+      "method_name": "ITS 区段测序比对",
+      "conclusion": "与致命鹅膏 A. exitialis 参考序列相似度 99.6%",
+      "confidence": "high",
+      "is_screening": false,
+      "resulted_at": "2026-09-20T17:20:00+08:00",
+      "superseded": false
+    },
+    {
+      "id": "cons-v1",
+      "type": "consumption",
+      "aliquot_ref": "ali-soup-A",
+      "quantity": {"value": 38, "unit": "mL"},
+      "used_by_result_refs": ["res-r2-chem"],
+      "at": "2026-09-20T05:50:00+08:00"
+    },
+    {
+      "id": "cons-v2",
+      "type": "consumption",
+      "aliquot_ref": "ali-soup-B",
+      "quantity": {"value": 30, "unit": "mL"},
+      "used_by_result_refs": [],
+      "at": "2026-09-20T11:00:00+08:00",
+      "note": "前处理与复检全部耗用。"
+    },
+    {
+      "id": "cons-v3",
+      "type": "consumption",
+      "aliquot_ref": "ali-fruit-cap-morph",
+      "quantity": {"value": 1, "unit": "株"},
+      "used_by_result_refs": ["res-r1-morph"],
+      "at": "2026-09-20T10:30:00+08:00"
+    },
+    {
+      "id": "cons-v4",
+      "type": "consumption",
+      "aliquot_ref": "ali-fruit-cap-mol",
+      "quantity": {"value": 1, "unit": "株"},
+      "used_by_result_refs": ["res-r4-mol"],
+      "at": "2026-09-20T10:40:00+08:00"
+    },
+    {
+      "id": "cons-v5",
+      "type": "consumption",
+      "aliquot_ref": "ali-fruit-stem-chem",
+      "quantity": {"value": 1, "unit": "株"},
+      "used_by_result_refs": ["res-r3-chem"],
+      "at": "2026-09-20T12:00:00+08:00"
+    },
+    {
+      "id": "ret-vial-A",
+      "type": "return",
+      "aliquot_ref": "ali-soup-A",
+      "quantity": {"value": 2, "unit": "mL"},
+      "returned_to_aliquot_ref": "ali-soup-retain",
+      "at": "2026-09-20T07:00:00+08:00",
+      "note": "快筛剩余残液并回留样分装冷藏，并入留样台账。"
+    },
+    {
+      "id": "rpt-0919-01",
+      "type": "report",
+      "event_ref": "evt-2026-0919-01",
+      "report_no": "FUNGI-RPT-2026-0117",
+      "version": 1,
+      "status": "superseded",
+      "issued_at": "2026-09-20T18:00:00+08:00",
+      "based_on_result_refs": ["res-r1-morph", "res-r2-chem", "res-r3-chem", "res-r4-mol"],
+      "overall_conclusion": "综合形态、化学与分子证据，本次误食材料高度支持为致命鹅膏并检出 α-鹅膏毒肽；快筛阴性保留在案但不作解除依据。",
+      "diagnostic_boundary": "报告仅提供检验证据与风险提示，不替代临床诊断与处置决定。",
+      "superseded_by": "rpt-0919-02"
+    },
+    {
+      "id": "rpt-0919-02",
+      "type": "report",
+      "event_ref": "evt-2026-0919-01",
+      "report_no": "FUNGI-RPT-2026-0117",
+      "version": 2,
+      "status": "revised",
+      "issued_at": "2026-09-21T10:30:00+08:00",
+      "revision_reason": "发现 ali-fruit-stem-chem 前处理台面曾有其他案件高浓度标样污染疑点，按质控以新版本重评；v1 不覆盖、不删除。",
+      "based_on_result_refs": ["res-r1-morph", "res-r2-chem", "res-r3-chem-rerun", "res-r4-mol"],
+      "overall_conclusion": "换空白基质与新批次试剂复测后仍稳定检出 α-鹅膏毒肽，污染疑点排除，维持高度支持致命鹅膏的结论；初筛阴性仍仅作低置信参考。",
+      "diagnostic_boundary": "报告仅提供检验证据与风险提示，不替代临床诊断与处置决定。",
+      "supersedes": "rpt-0919-01",
+      "superseded_by": null
+    },
+    {
+      "id": "res-r3-chem-rerun",
+      "type": "test_result",
+      "aliquot_ref": "ali-fruit-stem-retain",
+      "method": "chemical",
+      "method_name": "LC-MS/MS 鹅膏毒肽定量（污染疑点复测）",
+      "conclusion": "检出 α-鹅膏毒肽 1.9 mg/kg（干重），空白与加标回收合格",
+      "confidence": "high",
+      "is_screening": false,
+      "resulted_at": "2026-09-21T09:40:00+08:00",
+      "rerun_of": "res-r3-chem",
+      "superseded": false,
+      "note": "复测使用留样；原结果 res-r3-chem 保留在案，不做覆盖。"
+    },
+    {
+      "id": "cons-v6-rerun",
+      "type": "consumption",
+      "aliquot_ref": "ali-fruit-stem-retain",
+      "quantity": {"value": 0.5, "unit": "株"},
+      "used_by_result_refs": ["res-r3-chem-rerun"],
+      "at": "2026-09-21T09:00:00+08:00"
+    },
+    {
+      "id": "reassess-obs-v2",
+      "type": "observation_reassessment",
+      "triggered_by_report_ref": "rpt-0919-02",
+      "event_ref": "evt-2026-0919-01",
+      "at": "2026-09-21T11:00:00+08:00",
+      "targets": ["ppl-index", "ppl-spouse", "ppl-neighbor"],
+      "still_under_observation": ["ppl-index", "ppl-spouse", "ppl-neighbor"],
+      "action": "对仍在观察的全部同餐人员重评并延长肝功能监测至 96 小时；不出于阴性初筛解除任何人观察。",
+      "clinical_owner": "值班医生",
+      "note": "重评只更新风险与监测建议，诊断与收治仍由临床决定。"
+    },
+    {
+      "id": "esc-01",
+      "type": "escalation",
+      "event_ref": "evt-2026-0919-01",
+      "raised_at": "2026-09-20T18:20:00+08:00",
+      "raised_by": "联合实验室值班长",
+      "level": "市级突发公共卫生事件联动",
+      "trace": {
+        "report_ref": "rpt-0919-01",
+        "report_version_at_use": 1,
+        "sample_states_at_use": [
+          {"sample_ref": "smp-soup-ER", "state": "留样冷藏中", "retained_aliquots": ["ali-soup-retain"]},
+          {"sample_ref": "smp-fruit-CDC-01", "state": "2 株已耗用（形态/分子取材），1 株干制凭证标本留存", "retained_aliquots": ["ali-fruit-cap-voucher"]},
+          {"sample_ref": "smp-fruit-CDC-02", "state": "部分留样冻存中", "retained_aliquots": ["ali-fruit-stem-retain"]}
+        ],
+        "receipt_refs": ["tfr-ER-to-CDC", "tfr-CDC-to-LAB"]
+      },
+      "note": "从一次升级即可追到：采用的报告及版本、样本当时状态、两次转交的接收确认。"
+    },
+    {
+      "id": "retention-policy-01",
+      "type": "retention_policy",
+      "event_ref": "evt-2026-0919-01",
+      "legal_hold_until": "2028-09-19",
+      "applies_to_aliquots": ["ali-soup-retain", "ali-fruit-cap-voucher", "ali-fruit-stem-retain"],
+      "note": "法定留样期自事件结案起不少于两年；到期前留存材料不得销毁。"
+    },
+    {
+      "id": "disp-soup-retain",
+      "type": "disposal",
+      "status": "planned_pending_expiry",
+      "aliquot_ref": "ali-soup-retain",
+      "quantity": {"value": 52, "unit": "mL"},
+      "planned_after": "2028-09-19",
+      "method": "高压灭菌后按医疗废物交接",
+      "witness_required": true,
+      "manifest_ref": null,
+      "note": "数量含 ret-vial-A 并回的 2 mL；法定留样期结束后方可执行，执行时补双人签字与转移联单，做到去向可证。"
+    },
+    {
+      "id": "disp-stem-retain",
+      "type": "disposal",
+      "status": "planned_pending_expiry",
+      "aliquot_ref": "ali-fruit-stem-retain",
+      "quantity": {"value": 0.5, "unit": "株"},
+      "planned_after": "2028-09-19",
+      "method": "高压灭菌后按医疗废物交接",
+      "witness_required": true,
+      "manifest_ref": null,
+      "note": "留样 1 株经复测耗用 0.5 株，余 0.5 株到期处置；数量与 cons-v6-rerun 相符。"
+    },
+    {
+      "id": "disp-cap-voucher",
+      "type": "disposal",
+      "status": "planned_pending_expiry",
+      "aliquot_ref": "ali-fruit-cap-voucher",
+      "quantity": {"value": 1, "unit": "株"},
+      "planned_after": "2028-09-19",
+      "method": "留样期满转菌物标本馆长期归档，登记入馆编号",
+      "witness_required": true,
+      "manifest_ref": null,
+      "note": "凭证标本不销毁，期满后去向为标本馆；执行时补入馆交接凭证。"
+    }
+  ]
 }
